@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <mvc:resources mapping="/statics/**" location="/statics/"/>
+    <import resource="applicationContext.xml"/>
+
+    <mvc:annotation-driven conversion-service="myConversionService"/>
+
+
+    <bean id="myConversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <!-- 引入自己配置的自定义转换器，将String类型转换为Date日期 -->
+                <bean class="com.fsats.synthesis.jqueryvalidate.converter.MyConversionDateToString">
+                    <constructor-arg name="patten" value="yyyy-MM-dd"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+    <!--视图解析器配置-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 配置，前缀，后缀 -->
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 配置支持文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 默认编码格式UTF-8 -->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 最大上传大小512000B -->
+        <!-- <property name="maxUploadSize" value="512000"></property> -->
+    </bean>
+</beans>
