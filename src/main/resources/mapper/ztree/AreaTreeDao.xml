@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fsats.synthesis.ztree.AreaTreeDao">
+    <resultMap id="base" type="com.fsats.synthesis.ztree.AreaTree">
+        <id column="codeid" property="id"/>
+        <result column="parentid" property="pid"/>
+        <result column="cityName" property="name"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="base" useCache="true">
+        select * from tb_da_area
+    </select>
+
+</mapper>
