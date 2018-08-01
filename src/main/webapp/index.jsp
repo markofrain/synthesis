@@ -19,7 +19,8 @@
 
 <a href="/dept/form">jquery validate校验 dept注册</a>
 
-<a href="/treedata/list">显示ztree 数据</a>
+<a href="/treedata/list">简单json显示ztree 数据</a>
 
+<a href="treedata/root">异步显示数据</a>
 </body>
 </html>

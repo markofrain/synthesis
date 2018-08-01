@@ -11,4 +11,11 @@
         select * from tb_da_area
     </select>
 
+    <select id="getRoot" resultMap="base" useCache="true">
+        select * from synthesis.tb_da_area where parentid=0;
+    </select>
+
+    <select id="get" resultMap="base" useCache="true" parameterType="int">
+        select * from synthesis.tb_da_area where parentid=#{id}
+    </select>
 </mapper>

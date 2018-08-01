@@ -916,22 +916,43 @@
       <DefaultForCharset>0</DefaultForCharset>
     </collation>
     <table id="230" parent="5" name="tb_da_area"/>
-    <column id="231" parent="230" name="codeid">
+    <table id="231" parent="5" name="test_area"/>
+    <column id="232" parent="230" name="codeid">
       <Position>1</Position>
       <DataType>mediumint(12)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="232" parent="230" name="parentid">
+    <column id="233" parent="230" name="parentid">
       <Position>2</Position>
       <DataType>int(12)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="233" parent="230" name="cityName">
+    <column id="234" parent="230" name="cityName">
       <Position>3</Position>
       <DataType>varchar(180)|0s</DataType>
       <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="235" parent="231" name="codeid">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="236" parent="231" name="parentid">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="237" parent="231" name="cityname">
+      <Position>3</Position>
+      <DataType>varchar(20)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="238" parent="231" name="isparent">
+      <Position>4</Position>
+      <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
   </database-model>

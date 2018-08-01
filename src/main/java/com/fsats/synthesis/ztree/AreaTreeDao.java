@@ -8,4 +8,8 @@ import java.util.List;
 public interface AreaTreeDao {
 
     public List<AreaTree> findAll();
+
+    public List<AreaTree> getRoot();
+
+    public List<AreaTree> get(Integer id);
 }

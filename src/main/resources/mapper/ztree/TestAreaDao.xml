@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fsats.synthesis.ztree.TestAreaDao">
+    <resultMap id="base" type="com.fsats.synthesis.ztree.TestArea">
+        <id column="codeid" property="id"/>
+        <result column="parentid" property="pid"/>
+        <result column="cityName" property="name"/>
+        <result column="isParent" property="isp"/>
+    </resultMap>
+
+    <select id="get" resultMap="base" parameterType="int">
+        select * from test_area where parentid=#{id}
+    </select>
+</mapper>

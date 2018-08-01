@@ -9,7 +9,20 @@
     <mvc:resources mapping="/statics/**" location="/statics/"/>
     <import resource="applicationContext.xml"/>
 
-    <mvc:annotation-driven conversion-service="myConversionService"/>
+    <mvc:annotation-driven conversion-service="myConversionService">
+
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>text/plain;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
 
     <bean id="myConversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">

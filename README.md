@@ -31,6 +31,9 @@ zTree js
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#e2">默认标签校验规则</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#e3">js设置校验规则</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#e4">其他方法级问题</a><br/>
+<a href="#f1">zTree js框架</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f2">基本json使用，一次性加载完毕</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f3">异步加载</a>
 
 
 <h2 id="a1">JSP自定义标签</h2>
@@ -379,6 +382,117 @@ jQuery.validator.addMethod("checkPhone", function(value, element) {
 校验的话，只需要在rules对应属性中设置，checkPhone:true。或者标签中class="checkPhone",或标签属性,checkPhone="true"。
 
 
+<h2 id="f1">zTree js框架</h2>
 
+js包下载：[github地址](https://github.com/zTree/zTree_v3.git)
+
+包大小约3-3MB，可整个导入项目静态文件夹下
+
+<h3 id="f2">基本json使用，一次性加载完毕</h3>
     
+必须要用到的初始化方法，用于初始化Tree
+
+```
+$.fn.zTree.init($("#treedata"),setting,zNodes);
+```
+
+该方法第一个参数为要展示的对象，setting为Tree设置，zNodes就是要展示的数据。
+
+而展示对象object，必须是一个ul标签，且具有id和class="ztree"属性。
+
+完整代码:
+
+```
+<script type="text/javascript">
+    var zNodes=${data};
+    var setting={
+        data:{
+            simpleData:{
+                enable:true,
+                idKey:"id",
+                pIdKey:"pid",
+                rootPId:""
+            }
+        }
+    }
+    $(function(){
+        $.fn.zTree.init($("#treedata"),setting,zNodes);
+    });
+</script>
+
+<div>
+    <ul id="treedata" class="ztree"></ul>
+</div>
+```
+
+<h3 id="f3">异步加载</h3>
+
+对于异步加载来说，可以说很简单，但是新手的话，别人的博客如果没有提出重点，而你的类属性和他的类属性设置的还不一样，那么你就可能会像我一样出错。
+
+然而找了一上午，终于看了官方的demo和response数据，才发现问题。
+
+那么，如果你的问题是:首次加载一级节点,之后再点击就没任何反应，并且图标是文件。那么你的问题就和我一样了。
+
+出现问题的原因:就是少了isParent属性。无法确定是否是父节点，只能认为是子节点。而这个isParent属性可以是类属性，也可以是treeNode的属性。
+
+所以依据正常情况，你需要**为类设置一个isParent属性**，这个转json时有这个属性。而这个属性会让ztree判断为是否为父级，为true则显示为文件夹，false显示为文件。而你的数据无法显示，可能就少了这个属性。
+
+现在根据isParent情况，分为两类，一个是有此属性，一个是没有此属性。
+
+1. 有isParent属性,那么只需要设置异步加载的选项(非常建议，省去很多不必要麻烦)
+
+```
+var setting = {
+    data: {
+        key: {
+            name: "name",
+        },
+        simpleData: {
+            enable: true,
+            idKey: "id",
+            pIdKey: "pid",
+            rootPId: 0
+        }
+    },
+    async:{
+        enable:true,
+        autoParam:["id"],
+        type:"post",
+        url:"${pageContext.request.contextPath}/treedata/get"
+    }
+};
+
+$(function(){
+    $.fn.zTree.init($("#treedata"),setting);
+})
+```
+另外注意的时，初始化树，需要将init放在$(function(){})中，否则将报错
+
+    Cannot read property 'style' of null
+
+ztree会依据你的isParent属性为true还是false，来判断图标如何显示。
+
+2. 数据库已经建好，且类属性不便更改(无法完整解决，图标都是文件夹)
+
+如果你的数据库或属性有level字段，并且你的层级结构一致，并不存在有的一级节点下显示文件，有的二级节点下显示文件的情况。
+
+那么你可以通过异步选项的dataFilter属性方法来解决，该方法用于过滤传来的数据
+
+```
+dataFilter:function (treeId,parentNode,childNodes) {
+    for (var i=0, l=childNodes.length; i<l; i++) {
+        if()
+        childNodes[i].isParent = true;
+    }
+    return childNodes;
+}
+```
+参数分别为树容器的id值，父节点的treeNode对象，异步加载获得数据转换成树节点的集合。
+
+treeNode对象的isParent属性表示是否为父级，与类中的isParent一样，是文件还是文件夹。
+
+但是这样做出现的问题是，你的每一层每一项图标都是文件夹。
+
+> 本项目是由于isParent属性情况导致，所以新建TestArea类和TestAreaDao接口，重新解决的。
+
 
