@@ -1,5 +1,7 @@
 package com.fsats.synthesis.ztree;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +31,18 @@ public class AreaTreeService {
 
     public List<TestArea> getTestArea(Integer id){
         return testAreaDao.get(id);
+    }
+
+    /**
+     * 使用pageHelper分页
+     * @param pageNum 第几页
+     * @param pageSize 每页显示条数
+     * @return
+     */
+    public PageInfo<AreaTree> pageList(Integer pageNum,Integer pageSize){
+        PageHelper.startPage(pageNum, pageSize);
+        List<AreaTree> areaTreeList = areaTreeDao.findAll();
+        PageInfo<AreaTree> pageInfo = new PageInfo<AreaTree>(areaTreeList);
+        return pageInfo;
     }
 }

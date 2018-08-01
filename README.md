@@ -34,6 +34,7 @@ zTree js
 <a href="#f1">zTree js框架</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#f2">基本json使用，一次性加载完毕</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#f3">异步加载</a><br/>
+<a href="#g1">Mybatis分页插件PageHelper</a><br/>
 
 
 <h2 id="a1">JSP自定义标签</h2>
@@ -124,7 +125,7 @@ tag自定义文件主要用于对重复jsp代码的自定义，也可以进行�
 > 实例在customizetag包
 
 
-<h2 id="#b1">Js Mustache模板引擎</h2>
+<h2 id="b1">Js Mustache模板引擎</h2>
 
 Mustache模板引擎需要引入mustache.min.js的js文件，它的官网在[Mustache](https://github.com/janl/mustache.js)
 
@@ -494,5 +495,76 @@ treeNode对象的isParent属性表示是否为父级，与类中的isParent一�
 但是这样做出现的问题是，你的每一层每一项图标都是文件夹。
 
 > 本项目是由于isParent属性情况导致，所以新建TestArea类和TestAreaDao接口，重新解决的。
+
+
+<h2 id="g1">Mybatis分页插件PageHelper</h2>
+
+[GitHub地址](https://github.com/pagehelper/Mybatis-PageHelper)
+
+一下示例为最基本示例，详细内容看github中文档，及其他博客。
+
+此示例，href属性跳转后台获得数据，并非ajax异步，导航只有首页，尾页，上一页，下一页。分页导航请在其他地方查找。
+
+添加pom依赖
+
+```
+<dependency>
+  <groupId>com.github.pagehelper</groupId>
+  <artifactId>pagehelper</artifactId>
+  <version>5.1.4</version>
+</dependency>
+```
+
+service层设置
+
+```
+/**
+ * 使用pageHelper分页
+ * @param pageNum 第几页
+ * @param pageSize 每页显示条数
+ * @return
+ */
+public PageInfo<AreaTree> pageList(Integer pageNum,Integer pageSize){
+    PageHelper.startPage(pageNum, pageSize);
+    List<AreaTree> areaTreeList = areaTreeDao.findAll();
+    PageInfo<AreaTree> pageInfo = new PageInfo<AreaTree>(areaTreeList);
+    return pageInfo;
+}
+```
+
+controller设置
+
+```
+@RequestMapping("list")
+public String list(Model model, @RequestParam(defaultValue = "1") Integer pageNum){
+    //model.addAttribute("data", areaTreeService.findAll());
+    PageInfo<AreaTree> pageInfo = areaTreeService.pageList(pageNum, 15);
+    model.addAttribute("pageInfo", pageInfo);
+    return "pagination/page";
+}
+```
+
+jsp设置
+
+```
+<body>
+    <table>
+        <c:forEach var="area" items="${pageInfo.list}">
+            <tr>
+                <td>${area.id}</td>
+                <td>${area.name}</td>
+                <td>${area.pid}</td>
+            </tr>
+        </c:forEach>
+    </table>
+<ul>
+    <a href="/pagination/list?pageNum=1">首页</a>
+    <a href="/pagination/list?pageNum=${pageInfo.prePage<1?1:pageInfo.prePage}">上一页</a>
+    <span>${pageInfo.pageNum}</span>
+    <a href="/pagination/list?pageNum=${pageInfo.nextPage>pageInfo.pages?pageInfo.pages:pageInfo.nextPage}">下一页</a>
+    <a href="/pagination/list?pageNum=${pageInfo.pages}">尾页</a>
+</ul>
+```
+
 
 

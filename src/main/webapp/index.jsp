@@ -22,5 +22,7 @@
 <a href="/treedata/list">简单json显示ztree 数据</a>
 
 <a href="treedata/root">异步显示数据</a>
+
+<a href="pagination/list">twbs分页插件显示</a>
 </body>
 </html>
