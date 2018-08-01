@@ -32,4 +32,13 @@ public class AreaTree {
     public void setPid(Integer pid) {
         this.pid = pid;
     }
+
+    @Override
+    public String toString() {
+        return "AreaTree{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", pid=" + pid +
+                '}';
+    }
 }

@@ -24,5 +24,7 @@
 <a href="treedata/root">异步显示数据</a>
 
 <a href="pagination/list">twbs分页插件显示</a>
+
+<a href="jbox/index">jbox</a>
 </body>
 </html>

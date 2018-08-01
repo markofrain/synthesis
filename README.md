@@ -1,5 +1,12 @@
 # 项目技术综合学习文档
 
+[GitHub地址](https://github.com/markofrain/synthesis)
+
+**重点重点:主要看README!!!!**
+**重点重点:主要看README!!!!**
+**重点重点:主要看README!!!!**
+
+
 包含前端技术:
 
 jsp自定义标签
@@ -18,6 +25,8 @@ jquery jbox通知插件
 
 zTree js
 
+具体以目录为准!!!
+
 
 **目录**
 
@@ -35,6 +44,12 @@ zTree js
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#f2">基本json使用，一次性加载完毕</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#f3">异步加载</a><br/>
 <a href="#g1">Mybatis分页插件PageHelper</a><br/>
+<a href="#h1">stephanwagner jbox弹框插件</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#h2">基本提示框(全屏)</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#h3">移动弹框</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#h4">弹框内容由ajax发起请求并显示</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#h5">鼠标悬停显示信息</a><br/>
+
 
 
 <h2 id="a1">JSP自定义标签</h2>
@@ -567,4 +582,149 @@ jsp设置
 ```
 
 
+<h2 id="h1">stephanwagner jbox弹框插件</h2>
 
+stephanwagner jbox弹框插件可以说是很优美的弹框，与jquery jbox相比显得更有有活力一些。
+
+[GitHub地址](https://github.com/StephanWagner/jBox)
+[Demo演示地址](https://stephanwagner.me/jBox/)
+
+由于该弹框插件在github上star将近1k，但使用的还是很少，博客出来的更少,而对于某些文章博客讲述的并不完整。具体参数也不详细。少了一个参数就出不来正常效果。
+
+所以下载源码包后，Demo下的示例，找到你需要的某个案例，进行拷贝。对应拷贝，包括html和demo.js里的实例化jbox对象。
+
+> 实例化jBox都应放在$(function(){})中
+
+<h3 id="h2">基本提示框(全屏)</h3>
+
+```
+//基本提示框
+new jBox('Modal', {
+    attach: '#baseShow',
+    height: 200,
+    overlay:false,//是否覆盖页面(界面只有弹框，背景为灰色)
+    title: '打开一个提示框',
+    content: '这是一个提示框，你可以按键Esc或点击关闭按钮关闭'
+});
+
+<%--基本提示弹框--%>
+<div id="baseShow" class="target-click">Click me</div>
+```
+
+
+<h3 id="h3">移动弹框</h3>
+
+依据示例拷贝，该移动弹框，toggle效果，点击一次出现，再点击消失，并且框内数据可以保留。
+
+```
+<script type="text/javascript">
+    $(function(){
+        //移动弹框设置
+        new jBox('Modal', {
+            attach: '#show',
+            width: 350,
+            height: 200,
+            blockScroll: false,
+            animation: 'zoomIn',
+            draggable: 'title',
+            closeButton: true,
+            content: $("#showBox"),
+            title: '移动弹框',
+            overlay: false,
+            reposition: false,
+            repositionOnOpen: false
+        });
+    });
+</script>
+
+//移动弹框设置
+<div id="show" class="target-click">Click me</div>
+<div id="showBox" style="display: none">
+    <form action="/jbox/save" type="post">
+        <input type="text" name="id" value=""/>
+        <input type="text" name="name" value=""/>
+        <input type="submit" value="提交"/>
+    </form>
+</div>
+```
+
++ title属性为标题，
++ content属性是内容，可以引用容器，将某个div等引入。
++ attach属性是触发弹框的id或class选择器
+
+<h3 id="h4">弹框内容由ajax发起请求并显示</h3>
+
+点击后，通过ajax属性操作，完美移植了$.ajax的回掉函数。
+
+弹框的文本和内容均可以在回掉函数中重新再次设置。
+
+```
+//ajax弹框效果
+new jBox('Modal', {
+    attach: '#showAjax',
+    width: 450,
+    height: 250,
+    closeButton: 'title',
+    animation: false,
+    title: 'Ajax请求弹框',
+    ajax: {
+        url: 'get',
+        data: {
+            id: '1982',
+        },
+        reload: 'strict',
+        setContent: false,
+        beforeSend: function() {
+            this.setContent('');
+            this.setTitle('<div class="ajax-sending">Ajax请求发送中...</div>');
+        },
+        complete: function(response) {
+            this.setTitle('<div class="ajax-complete">AJAX请求完成</div>');
+        },
+        success: function(response) {
+            this.setContent('<div class="ajax-success"> 编号:'+ response.id + '<br/>城市:' + response.name  + '</tt></div>');
+        },
+        error: function() {
+            this.setContent('<div class="ajax-error">抱歉，请求出现错误</div>');
+        }
+    }
+});
+
+<%--ajax弹框--%>
+<div id="showAjax" class="target-click">Click me</div>
+```
+
+对于前台，可以使用线程睡眠，此时弹框中内容出现圆圈旋转，处于等待中。
+
+<h3 id="h5">鼠标悬停显示信息</h3>
+
+```
+<%--鼠标悬停显示内容--%>
+<span id="hover" class="target"> hover me</span>
+
+//鼠标悬停显示内容
+new jBox('Tooltip', {
+    attach: '#hover',
+    width: 300,
+    pointer: 'right:80',
+    animation: 'move',
+    delayOpen: 0,
+    delayClose: 100,
+    content: '此框触碰即可打开，移出鼠标后关闭',
+    onOpen: function() {
+        this.source.removeClass('active').html('Open');
+    },
+    onClose: function() {
+        this.source.removeClass('active').html('Hover me');
+    }
+});
+```
+
+可设置宽度，高度依据内容自动增高，delayOpen表示打开所需要的时间，delayClose表示关闭所需要的时间。
+
+pointer表示弹框的位置，块级元素和行级元素可能出书位置不一样，需要通过此属性进行调整，right和left，单位为像素。
+
+onOpen回调函数表示当弹框显示的时候做的事情，可以更改内容等其他操作，onClose回调函数与之相反。
+
+
+其他样式查看源码的Demo。
