@@ -31,9 +31,9 @@ zTree js
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#e2">默认标签校验规则</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#e3">js设置校验规则</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#e4">其他方法级问题</a><br/>
-<a href="#f1">zTree js框架</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f2">基本json使用，一次性加载完毕</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f3">异步加载</a>
+<a href="#f1">zTree js框架</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f2">基本json使用，一次性加载完毕</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f3">异步加载</a><br/>
 
 
 <h2 id="a1">JSP自定义标签</h2>
@@ -439,7 +439,7 @@ $.fn.zTree.init($("#treedata"),setting,zNodes);
 
 现在根据isParent情况，分为两类，一个是有此属性，一个是没有此属性。
 
-1. 有isParent属性,那么只需要设置异步加载的选项(非常建议，省去很多不必要麻烦)
+**1. 有isParent属性,那么只需要设置异步加载的选项(非常建议，省去很多不必要麻烦)**
 
 ```
 var setting = {
@@ -472,7 +472,7 @@ $(function(){
 
 ztree会依据你的isParent属性为true还是false，来判断图标如何显示。
 
-2. 数据库已经建好，且类属性不便更改(无法完整解决，图标都是文件夹)
+**2. 数据库已经建好，且类属性不便更改(无法完整解决，图标都是文件夹)**
 
 如果你的数据库或属性有level字段，并且你的层级结构一致，并不存在有的一级节点下显示文件，有的二级节点下显示文件的情况。
 
