@@ -3,7 +3,9 @@
 [GitHub地址](https://github.com/markofrain/synthesis)
 
 **重点重点:主要看README!!!!**
+
 **重点重点:主要看README!!!!**
+
 **重点重点:主要看README!!!!**
 
 
@@ -49,6 +51,9 @@ zTree js
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#h3">移动弹框</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#h4">弹框内容由ajax发起请求并显示</a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#h5">鼠标悬停显示信息</a><br/>
+<a href="#i1">使用apache poi包操作Excel</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#i2">以数据库表数据为例，读取表数据到对象中</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#i3">以数据库表模板为例，进行输出下载</a><br/>
 
 
 
@@ -728,3 +733,182 @@ onOpen回调函数表示当弹框显示的时候做的事情，可以更改内�
 
 
 其他样式查看源码的Demo。
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="i1">使用apache poi包操作Excel</h2>
+
+此开源包可有效操纵Excel和Word，此处介绍如何读取与创建Excel文件。
+
+源码包在apache官网下载，源码包较大，解压后的文件大小约在180MB左右，另外是最新版的3.1.7版本，在单元格样式设置中与之前版本有所不同。例如单元格样式居中设置，边框设置等。
+
+依赖POM如下:
+
+```
+<dependency>
+  <groupId>org.apache.poi</groupId>
+  <artifactId>poi</artifactId>
+  <version>3.17</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.poi</groupId>
+  <artifactId>poi-ooxml</artifactId>
+  <version>3.17</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.poi</groupId>
+  <artifactId>poi-scratchpad</artifactId>
+  <version>3.17</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.poi</groupId>
+  <artifactId>poi-excelant</artifactId>
+  <version>3.17</version>
+</dependency>
+```
+
+<h3 id="i2">以数据库表数据为例，读取表数据到对象中</h3>
+
++ 首先需要获得文件对象
++ 依据后缀xls或xlsx文件来实例化WorkBook对象，并获得Sheet对象
++ 依据Sheet中的Row对象进行循环读取行，每行为一条数据
++ 行内再循环列，得到每一个的单元格对象，根据单元格对象获得值和样式或注释等一系列信息
++ 最后每行单元格信息存放实体类对象中
+
+1. form表单上传文件，设置enctype属性为multipart/form-data，method属性为post，这是上传文件必须的。
+
+2. 将文件输入流作为WorkBook对象构造方法的参数，并同时通过文件名后缀确定实例化的对象是HSSFWorkbook还是XSSFWorkbook
+
+```
+if(StringUtils.isBlank(fileName)){
+    throw new RuntimeException("导入文档为空");
+}else if(fileName.toLowerCase().endsWith("xls")){
+    this.wb = new HSSFWorkbook(is);
+}else if(fileName.toLowerCase().endsWith("xlsx")){
+    this.wb = new XSSFWorkbook(is);
+}else{
+    throw new RuntimeException("文档格式不正确");
+}
+if(this.wb.getNumberOfSheets()<1){
+    throw new RuntimeException("文档中没有工作表");
+}
+```
+
+3. 得到工作簿对象后就需要获得数据，通过循环来解决
+
+```
+List<Student> list = Lists.newArrayList();
+Sheet sheet = wb.getSheetAt(0);
+
+for (Row row:sheet) {
+    if(row.getRowNum()<1) continue;//第一行跳过
+    Student student = new Student();
+    student.setName(row.getCell(0).getStringCellValue());
+    student.setSex(row.getCell(1).getStringCellValue());
+    student.setAge(String.valueOf(row.getCell(2).getNumericCellValue()));
+    student.setAddress(row.getCell(3).getStringCellValue());
+    student.setHigh(String.valueOf(row.getCell(4).getNumericCellValue()));
+
+    list.add(student);
+}
+```
+
+这里，只循环所有行，并未循环列，且并未直接获得Cell对象再获得值，因为我们对固定内容模板操作的话，可以通过1，2，3死值获得内容，这里直接获得单元格值。
+
+而如果对不确定的行和列数量时，通过Sheet的getLastRowNum获得行数，Row的getLastCellNum获得列数，进行循环。具体操作较复杂。
+
+```
+List<Student> list = Lists.newArrayList();
+Sheet sheet = wb.getSheetAt(0);
+
+for (Row row:sheet) {
+    if(row.getRowNum()<1) continue;//第一行跳过
+    Student student = new Student();
+    student.setName(row.getCell(0).getStringCellValue());
+    student.setSex(row.getCell(1).getStringCellValue());
+    student.setAge(String.valueOf(row.getCell(2).getNumericCellValue()));
+    student.setAddress(row.getCell(3).getStringCellValue());
+    student.setHigh(String.valueOf(row.getCell(4).getNumericCellValue()));
+    list.add(student);
+}
+return list;
+```
+
+<h3 id="i3">以数据库表模板为例，进行输出下载</h3>
+
++ 创建工作簿
++ 创建Sheet
++ 设置单元格样式，CellStyle对象作为Cell的属性
++ 设置数据，依然是循环设置
++ wb对象 write写数据
+
+
+对于获取和设置列值的问题，存在数据类型问题，可能出现，单元格数据类型问题，某数字应该通过getNumricCellValue方法得到，但可能需要通过getStringCellValue获得,在于单元格的值设置。在设置或获得值时，务必确定数据类型进行设置，解析生成务必模板一致。
+
+```
+public void exportTemplate(HttpServletResponse response,String fileName, List<Student> studentList, Integer propertyNum) throws IOException {
+    //获得工作表对象
+    XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+    //创建一个Sheet
+    Sheet sheet = xssfWorkbook.createSheet("学生信息");
+
+    //设置单元格类型
+    CellStyle cellStyle = xssfWorkbook.createCellStyle();
+    cellStyle.setAlignment(HorizontalAlignment.CENTER);
+    cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+    //创建标题
+    Row title = sheet.createRow(0);
+    title.createCell(0).setCellValue("学生姓名");
+    title.createCell(1).setCellValue("学生性别");
+    title.createCell(2).setCellValue("学生年龄");
+    title.createCell(3).setCellValue("学生地址");
+    title.createCell(4).setCellValue("学生身高");
+
+    //循环设置数据
+    for (int i = 0; i<studentList.size(); i++){
+        Row row = sheet.createRow(i+1);
+        Student stu = studentList.get(i);
+        for (int j = 0; j<propertyNum; j++){
+
+            Cell cell1 = row.createCell(0);
+            cell1.setCellValue(stu.getName());
+            cell1.setCellStyle(cellStyle);
+
+            Cell cell2 = row.createCell(1);
+            cell2.setCellValue(stu.getSex());
+            cell2.setCellStyle(cellStyle);
+
+            Cell cell3 = row.createCell(2);
+            cell3.setCellValue(Integer.valueOf(stu.getAge()));
+            cell3.setCellStyle(cellStyle);
+
+            Cell cell4 = row.createCell(3);
+            cell4.setCellValue(stu.getAddress());
+            cell4.setCellStyle(cellStyle);
+
+            Cell cell5 = row.createCell(4);
+            cell5.setCellValue(Integer.valueOf(stu.getHigh()));
+            cell5.setCellStyle(cellStyle);
+        }
+    }
+    File file = new File("C:/template/");
+    if(!file.exists()) file.mkdirs();
+    FileOutputStream outputStream = new FileOutputStream("C:/template/student.xlsx");
+    //保存
+    xssfWorkbook.write(outputStream);
+    xssfWorkbook.close();
+
+}
+```
+
+
+

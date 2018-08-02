@@ -26,5 +26,7 @@
 <a href="pagination/list">twbs分页插件显示</a>
 
 <a href="jbox/index">jbox</a>
+
+<a href="/poi/show">excel导入页面</a>
 </body>
 </html>

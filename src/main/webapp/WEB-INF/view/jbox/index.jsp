@@ -22,7 +22,7 @@
 <%--移动弹框设置--%>
 <div id="show" class="target-click">Click me</div>
 <div id="showBox" style="display: none">
-    <form action="/jbox/save" type="post">
+    <form action="/jbox/save" method="post">
         <input type="text" name="id" value=""/>
         <input type="text" name="name" value=""/>
         <input type="submit" value="提交"/>
